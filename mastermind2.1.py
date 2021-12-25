@@ -4,6 +4,8 @@ import tkinter.font as font
 import tkinter.ttk as ttk
 import random
 
+colors = ('Μαύρο', 'Άσπρο', 'Μπλε', 'Κόκκινο', 'Κίτρινο', 'Πράσινο', 'Πορτοκαλί', 'Μωβ')
+
 
 class Window():
     def __init__(self, title, bgcolor, fgcolor, imagefile, size, *msgargs):
@@ -25,36 +27,31 @@ class Window():
             for arg in msgargs[1:]:
                 button = tk.Button(self.win, text=arg[0], command=arg[1] )
                 button.grid(row=i, column=0)
-                i=i+1       
-    def terminate(self):
-        self.win.destroy()
-
+                i=i+1
 
 
 def NumPick():
-    mcol = ['white', 'black', 'blue', 'red', 'green', 'yellow', 'orange', 'purple']
-    m0 = random.choice(mcol)
-    m1 = random.choice(mcol)
-    m2 = random.choice(mcol)
-    m3 = random.choice(mcol)
-    value = [m0, m1, m2, m3]
-    return value
+    if players == 1:
+        colorinit.win.destroy() #Κανονικά αυτο δεν πρεπει να είναι εδω
+        return [random.choice(colors), random.choice(colors), random.choice(colors), random.choice(colors)]
+    if players == 2:
+        colorinit.win.destroy()
+        return [color0u.get(), color1u.get(), color2u.get(), color3u.get()]
 
 
 def maingame():
-    intro.terminate()
-
+    intro.win.destroy()
     global root
-    root = Window('Mastermind (C)2021 upatras All rights ', 'black', '#FFFFFF', None, '900x600')
+    root = Window('Mastermind (C)2021 upatras All rights ', 'black', '#FFFFFF', None, '900x600', '00:00 \t\t Παίχτης #1 <unnamed>')
 
 
-    global color0, color1, color2, color3
+    global color0, color1, color2, color3, randomcolors
 
     canvas = ImageTk.PhotoImage(Image.open('canvas.png'))
     lblcan = tk.Label(root.win, image=canvas)
     lblcan.place(relx=0.01, rely=0.085)
+    if counter==0 : randomcolors=NumPick()
     
-    colors = ('black', 'white', 'blue', 'red', 'yellow', 'green', 'orange', 'purple')
     color0 = ttk.Combobox(root.win, values = colors, width = 8)
     color0.place(relx=0.1, rely=0.9)
     color1 = ttk.Combobox(root.win, values = colors, width = 8)
@@ -69,14 +66,30 @@ def maingame():
     
     startscreen() #Εμφ η αρχ οθονη οταν πατω Χ
 
-counter=0
-if counter==0 : randomcolors=NumPick()
+
+
+def twoplayers():
+    players=2
+    global colorinit
+    colorinit = Window('Color selector', 'black', '#FFFFFF', None, '500x200', 'Είσαι ο παίκτης #2. Παρακαλώ επέλεξε τον μυστικο κωδικό με χρώματα που πρέπει να μαντέψει ο άλλος παίκτης. Στη συνέχεια πάτησε "Επιλογή κωδικού"')
+    global color0u, color1u, color2u, color3u
+    color0u = ttk.Combobox(colorinit.win, values = colors, width = 8)
+    color0u.place(relx=0.1, rely=0.5)
+    color1u = ttk.Combobox(colorinit.win, values = colors, width = 8)
+    color1u.place(relx=0.3, rely=0.5)
+    color2u = ttk.Combobox(colorinit.win, values = colors, width = 8)
+    color2u.place(relx=0.5, rely=0.5)
+    color3u = ttk.Combobox(colorinit.win, values = colors, width = 8)
+    color3u.place(relx=0.7, rely=0.5)
+    okbut = tk.Button(colorinit.win, text= 'Επιλογή κωδικού!', width=20, height=1, bg='green', fg = 'white', command = maingame).place(relx=0.1, rely=0.8)
+    
+
 
 def checkinp():
-    global counter
+    global counter, players
     
     Li = [color0.get(), color1.get(), color2.get(), color3.get()]
-
+    
     
     b1 = ImageTk.PhotoImage(Image.open('b1.png'))
     lb1 = tk.Label(root.win, image=b1)
@@ -94,7 +107,7 @@ def checkinp():
     lb4 = tk.Label(root.win, image=b4)
     lb4.place(relx=0.4  , rely= (47*(9.4-counter))/600)
     
-    print(randomcolors)
+    print(randomcolors, players)
     for i in range(4):
         if Li[i] == randomcolors[i]:
             print("RED")
@@ -102,15 +115,19 @@ def checkinp():
             print("WHITE")
     
     counter=counter+1
-    if counter>10:
-        root.terminate()
+    if counter>9:
+        root.win.destroy()
         counter=0
+        players=1
         go = Window('Game Over', "black", 'white', None, '400x100', 'Game Over!!')
         go.win.mainloop()
         
 
 def startscreen():
-    global intro
+    global intro, counter, players
+    counter=0
+    players=1
+    counter=0
     intro = Window('Καλώς ορίσατε στό Mastermind', None, 'white', 'background.png', '400x300')
 
     lab0 = tk.Label(intro.win, text = "Mastermind", bg="black", fg='white', font=('Times New Roman','23'), padx='20', pady='0')
@@ -120,13 +137,13 @@ def startscreen():
 
     butintro1 = tk.Button(intro.win, text='1 παίκτης - Αυτόματη επιλογή κωδικού', bg='brown', fg='white', height='1', width='50', command= maingame )
     butintro1.grid(row=2, column=1)
-    butintro2 = tk.Button(intro.win, text='2 παίκτες - Παιχνίδι μέσω LAN', bg='brown', fg='white', height='1', width='50', command= NumPick )
+    butintro2 = tk.Button(intro.win, text='2 παίκτες - Χειρ/τη επιλογή κωδικού', bg='brown', fg='white', height='1', width='50', command= twoplayers )
     butintro2.grid(row=3, column=1)
     butintro3 = tk.Button(intro.win, text='Ρυθμίσεις', bg='brown', fg='white', height='1', width='25', command= NumPick )
     butintro3.grid(row=5, column=1)
     butintro4 = tk.Button(intro.win, text='Περί', bg='brown', fg='white', height='1', width='25', command= NumPick )
     butintro4.grid(row=6, column=1)
-    butintro5 = tk.Button(intro.win, text='Προβολή -Διαγραφh σκορ', bg='brown', fg='white', height='1', width='25', command= intro.terminate )
+    butintro5 = tk.Button(intro.win, text='Προβολή -Διαγραφh σκορ', bg='brown', fg='white', height='1', width='25', command= intro.win.destroy )
     butintro5.grid(row=7, column=1)
 
 

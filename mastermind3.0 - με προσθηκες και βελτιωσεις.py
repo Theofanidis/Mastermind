@@ -30,7 +30,7 @@ class Window():
                 button.grid(row=i, column=0)
                 i=i+1
 
-
+### ΠΡΟΣΟΧΗ: Η ΜΕΤΑΒΛΗΤΗ players ΕΧΕΙ ΕΝΑ ΠΡΟΒΛΗΜΑ ΚΑΙ ΧΤΥΠΑΕΙ ΣΦΑΛΜΑ. ΝΑ ΤΟ ΔΕΙΞΟΥΜΕ ΣΤΟΝ ΣΓΑΡΜΠΑ
 def NumPick():
     if players == 1:
         #colorinit.win.destroy() #Κανονικά αυτο δεν πρεπει να είναι εδω

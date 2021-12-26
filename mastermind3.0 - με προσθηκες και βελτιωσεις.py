@@ -30,7 +30,7 @@ class Window():
                 button.grid(row=i, column=0)
                 i=i+1
 
-### ΠΡΟΣΟΧΗ: Η ΜΕΤΑΒΛΗΤΗ players ΕΧΕΙ ΕΝΑ ΠΡΟΒΛΗΜΑ ΚΑΙ ΧΤΥΠΑΕΙ ΣΦΑΛΜΑ. ΝΑ ΤΟ ΔΕΙΞΟΥΜΕ ΣΤΟΝ ΣΓΑΡΜΠΑ
+
 def NumPick():
     if players == 1:
         #colorinit.win.destroy() #Κανονικά αυτο δεν πρεπει να είναι εδω
@@ -93,7 +93,7 @@ def checkinp():
     outputcolors = []
 
     if '' in Li:
-        msg=Window('Error', bgcolor, fgcolor, None, '200x200', 'Πρεπει να επιλέξεις καποιο χρώμα! Δεν μπορεί να ναι κενο')
+        msg=Window('Error', bgcolor, fgcolor, None, '200x140', 'Πρεπει να επιλέξεις καποιο χρώμα! Δεν μπορεί να ναι κενο', ('Help', about), ('Send Feedback', about))
         
     elif '' not in Li:
         b1 = ImageTk.PhotoImage(Image.open('b1.png'))
@@ -120,15 +120,15 @@ def checkinp():
                 outputcolors.append('WHITE')
         print(outputcolors)
         if outputcolors == ['RED', 'RED', 'RED', 'RED']:
+            filesc=open('SETTINGS.txt', 'a', encoding='UTF-8')
+            filesc.write(datetime.datetime.now().strftime('%d - %m - %y  --> Παίκτης ') + playername +' - '+ str(counter) + ' Προσπάθειες \n' )                                                                                      #να βαλουμε και ημερομηνια -ωρα
+            filesc.close()
             root.win.destroy()
-            go = Window('Game Over', bgcolor, fgcolor, None, '400x100', 'Συγχαρητήρια! Κέρδισες')
+            go = Window('Game Over', bgcolor, fgcolor, None, '400x100', 'Συγχαρητήρια! Κέρδισες. \nΜπορείς να δείς το αναλυτικό σκορ σου στην καρτέλλα "Προβολή-Διαγραφή σκορ"')
         
         counter=counter+1
             
     if counter>9:
-        filesc=open('SETTINGS.txt', 'a')
-        filesc.write(counter+'\n')                                                                                      #ΔΕΝ ΛΕΙΤΟΥΡΓΕΙ TO APPEND ΣΤΟ ΑΡΧΕΙΟ!!!!
-        filesc.close()
         root.win.destroy()
         counter=0
         players=1
@@ -153,7 +153,7 @@ def applysettings():
     theme = themecombo.get()
     if theme == 'Λευκό': bgcolor, fgcolor = '#FFFFFF', '#000000'
     if theme == 'Μαύρο': bgcolor, fgcolor = '#000000', '#FFFFFF'
-    if theme == 'Πράσινο': bgcolor, fgcolor = '#00FFFF', '#000000'
+    if theme == 'Πράσινο': bgcolor, fgcolor = '#003301', '#FFFF66'
     else: pass
     writetofile(bgcolor, fgcolor, textbox.get(), False)
 def delscore(): writetofile('', '', '', True)
@@ -166,7 +166,7 @@ def settings():
     textbox.grid(row=5, column=0)
     
 def about():                                                                                                                                        ### ΕΔΩ ΘΑ ΒΑΛΟΥΜΕ ΤΑ ΟΝΟΜΑΤΑ ΜΑΣ
-    aboutdialog = Window('Πανεπιστήμιο Πατρών 2021', 'black', 'white', None, '400x400', 'hhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
+    aboutdialog = Window('Πανεπιστήμιο Πατρών 2021',bgcolor, fgcolor, None, '400x400', 'hhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
     
 def showscore():
     file = open('SETTINGS.txt', 'r', encoding='UTF-8')
@@ -223,6 +223,7 @@ lines=file.readlines()
 if lines[0] == 'CONFIGURED\n': pass
 else:
     os.system("pip install pillow")                                         ### ΑΥΤΟΜΑΤΟΠΟΙΗΜΕΝΗ ΕΓΚΑΤΑΣΤΑΣΗ ΒΙΒΛΙΟΘΗΚΩΝ. ΘΑ ΒΑΛΟΥΜΕ ΚΑΙ ΗΧΗΤΙΚΑ ΕΦΦΕ
+    os.system("pip install playsound")
 fgcolor = lines[1].rstrip()
 bgcolor = lines[2].rstrip()
 playername = lines[3].rstrip()
